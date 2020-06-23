@@ -14,8 +14,8 @@
         position: absolute;
         left: 0;
         right: 0;
-        top: 0;
-        bottom: 0;
+        /* top: 500; */
+        /* bottom: 0; */
       }
 
       .anim #spiral {
@@ -46,10 +46,10 @@
           stroke-width: 0.001;
           stroke: #000;
         }
-        60% {
+        40% {
           stroke-dashoffset: 0;
           stroke-width: 0.001;
-          stroke: #fff;
+          stroke: #000;
         }
       }
     </style>
@@ -66,9 +66,9 @@
       >
         <!-- <circle
           class="path"
-          cx="1.5"
-          cy="0.5"
-          r="0.02083"
+          cx="0.5"
+          cy=".25"
+          r="0.01083"
           stroke="white"
           stroke-width="0"
           fill="none"
@@ -79,44 +79,20 @@
           stroke="white"
           stroke-width="0"
           fill="none"
-          pathLength="100"
+          pathLength="30"
         />
       </svg>
     </div>
   </body>
   <script>
     let fullPath = document.getElementById("fullpath");
-
-    function basicPath() {
-      // start center area
-      let path = "M 0.2 0.5";
-
-      const loops = 12; //must set stroke-width and circle radius accordingly = 0.25/loops
-      // how many points in the loop is het going to cover? (the lower, the more squared)
-      const loopSteps = 64;
-      const coverCornerLoops =
-        Math.ceil(loops * Math.sqrt(2)) + 1; /*for inner circle*/
-
-      for (let loop = 0; loop <= coverCornerLoops; loop++) {
-        for (let i = 0; i < loopSteps; i++) {
-          let radius = (i / loopSteps + loop) / loops / 2;
-          let angle = (2 * Math.PI * i) / loopSteps;
-          let x = Math.cos(angle) * radius + 0.5;
-          let y = Math.sin(angle) * radius + 0.5;
-
-          path = path + "L" + x + " " + y;
-        }
-      }
-
-      return path;
-    }
-
     function nuancedPath() {
       let path = "";
-      const loops = 12; //must set stroke-width and circle radius accordingly = 0.25/loops
-      const coverCornerLoops =
-        Math.ceil(loops * Math.sqrt(2)) + 1; /*for inner circle*/
-      const loopSteps = 30;
+      const loops = 8; //must set stroke-width and circle radius accordingly = 0.25/loops
+      const coverCornerLoops = Math.ceil(
+        loops * Math.sqrt(2)
+      ); /*for inner circle*/
+      const loopSteps = 40;
       const tangentOff = (4 / 3) * Math.tan(Math.PI / (2 * loopSteps));
 
       let px = 0.5;
@@ -124,10 +100,10 @@
       let pcx = 0;
       let pcy = 0;
 
-      for (let loop = 0; loop <= coverCornerLoops; loop++) {
+      for (let loop = 0; loop <= coverCornerLoops / 5; loop++) {
         for (let i = 0; i < loopSteps; i++) {
           let radius = Math.max(
-            0.25 / loops,
+            0.5 / loops,
             (i / loopSteps + loop) / loops / 2
           );
           let angle = (2 * Math.PI * i) / loopSteps;
