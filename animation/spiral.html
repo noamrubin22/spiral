@@ -1,0 +1,184 @@
+<!-- See the video tutorial at https://youtu.be/BFesF3T1n4E -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        background: #acd;
+        overflow: hidden;
+      }
+
+      .page {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
+
+      .anim #spiral {
+        transform: rotate(0deg);
+        transform-origin: 50% 50%;
+        animation: spin 10s linear forwards;
+        overflow: visible;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(1440deg);
+        }
+      }
+
+      /* this makes the animation */
+      .anim .path {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        stroke-width: 0.0001;
+        stroke: #000;
+        animation: dash 50s ease-in forwards;
+      }
+
+      @keyframes dash {
+        0% {
+          stroke-dashoffset: 100;
+          stroke-width: 0.001;
+          stroke: #000;
+        }
+        60% {
+          stroke-dashoffset: 0;
+          stroke-width: 0.001;
+          stroke: #fff;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page"></div>
+
+    <div class="page" id="full" onclick="start()">
+      <svg
+        id="spiral"
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1 1"
+      >
+        <!-- <circle
+          class="path"
+          cx="1.5"
+          cy="0.5"
+          r="0.02083"
+          stroke="white"
+          stroke-width="0"
+          fill="none"
+        /> -->
+        <path
+          id="fullpath"
+          class="path"
+          stroke="white"
+          stroke-width="0"
+          fill="none"
+          pathLength="100"
+        />
+      </svg>
+    </div>
+  </body>
+  <script>
+    let fullPath = document.getElementById("fullpath");
+
+    function basicPath() {
+      // start center area
+      let path = "M 0.2 0.5";
+
+      const loops = 12; //must set stroke-width and circle radius accordingly = 0.25/loops
+      // how many points in the loop is het going to cover? (the lower, the more squared)
+      const loopSteps = 64;
+      const coverCornerLoops =
+        Math.ceil(loops * Math.sqrt(2)) + 1; /*for inner circle*/
+
+      for (let loop = 0; loop <= coverCornerLoops; loop++) {
+        for (let i = 0; i < loopSteps; i++) {
+          let radius = (i / loopSteps + loop) / loops / 2;
+          let angle = (2 * Math.PI * i) / loopSteps;
+          let x = Math.cos(angle) * radius + 0.5;
+          let y = Math.sin(angle) * radius + 0.5;
+
+          path = path + "L" + x + " " + y;
+        }
+      }
+
+      return path;
+    }
+
+    function nuancedPath() {
+      let path = "";
+      const loops = 12; //must set stroke-width and circle radius accordingly = 0.25/loops
+      const coverCornerLoops =
+        Math.ceil(loops * Math.sqrt(2)) + 1; /*for inner circle*/
+      const loopSteps = 30;
+      const tangentOff = (4 / 3) * Math.tan(Math.PI / (2 * loopSteps));
+
+      let px = 0.5;
+      let py = 0.5;
+      let pcx = 0;
+      let pcy = 0;
+
+      for (let loop = 0; loop <= coverCornerLoops; loop++) {
+        for (let i = 0; i < loopSteps; i++) {
+          let radius = Math.max(
+            0.25 / loops,
+            (i / loopSteps + loop) / loops / 2
+          );
+          let angle = (2 * Math.PI * i) / loopSteps;
+          let x = Math.cos(angle) * radius + 0.5;
+          let y = Math.sin(angle) * radius + 0.5;
+
+          let tangent = angle + Math.PI / 2;
+          let cx = Math.cos(tangent) * radius * tangentOff;
+          let cy = Math.sin(tangent) * radius * tangentOff;
+
+          if (loop == 0 && i == 0) {
+          } else if (loop == 0 && i == 1) {
+            path = path + "M" + x + " " + y;
+          } else {
+            path =
+              path +
+              "C" +
+              (px + pcx) +
+              " " +
+              (py + pcy) +
+              " " +
+              (x - cx) +
+              " " +
+              (y - cy) +
+              " " +
+              x +
+              " " +
+              y;
+          }
+
+          px = x;
+          py = y;
+          pcx = cx;
+          pcy = cy;
+        }
+      }
+
+      return path;
+    }
+
+    let path = nuancedPath();
+    fullPath.setAttribute("d", path);
+
+    function start() {
+      // adds class for animation
+      let fullPath = document.getElementById("full");
+      if (fullPath.className.indexOf("anim") == -1) {
+        fullPath.className += " anim";
+      } else {
+        fullPath.className = fullPath.className.replace(" anim", "");
+      }
+    }
+  </script>
+</html>
